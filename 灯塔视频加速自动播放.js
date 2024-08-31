@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         灯塔视频加速自动播放及自动学习
+// @name         美化灯塔视频加速自动播放及自动学习
 // @namespace    http://tampermonkey.net/
 // @version      3.0
-// @description  自动播放灯塔干部网络学院的视频内容，支持加速、减速、恢复默认速度按钮，显示视频总时长、当前时间和剩余时间。看完视频后自动返回上一页面并查找未学习视频进行播放。
+// @description  自动播放灯塔干部网络学院的视频内容，支持加速、减速、恢复默认速度按钮，显示视频总时长、当前时间和剩余时间。看完视频后自动返回上一页面并查找未学习视频进行播放。界面美化版本。
 // @author
 // @match        https://gbwlxy.dtdjzx.gov.cn/*
 // @grant        none
@@ -16,14 +16,14 @@
     controlPanel.style.position = 'fixed';
     controlPanel.style.top = '10px';
     controlPanel.style.left = '10px';
-    controlPanel.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
-    controlPanel.style.color = 'white';
-    controlPanel.style.padding = '10px';
-    controlPanel.style.borderRadius = '10px';
+    controlPanel.style.backgroundColor = 'rgba(255, 255, 255, 0.9)';
+    controlPanel.style.color = '#333';
+    controlPanel.style.padding = '15px';
+    controlPanel.style.borderRadius = '12px';
     controlPanel.style.fontFamily = 'Arial, sans-serif';
     controlPanel.style.zIndex = 9999;
-    controlPanel.style.boxShadow = '0 0 10px rgba(0, 0, 0, 0.5)';
-    controlPanel.style.width = '200px';
+    controlPanel.style.boxShadow = '0 4px 15px rgba(0, 0, 0, 0.2)';
+    controlPanel.style.width = '220px';
 
     // 创建加速、减速、恢复默认按钮
     let speedInput = document.createElement('input');
@@ -31,21 +31,26 @@
     speedInput.min = 0.1;
     speedInput.max = 16;
     speedInput.step = 0.1;
-    speedInput.value = 3; // 默认值为2倍速
-    speedInput.style.marginBottom = '10px';
+    speedInput.value = 3; // 默认值为3倍速
+    speedInput.style.marginBottom = '12px';
     speedInput.title = "输入播放速度";
     speedInput.style.width = '100%';
+    speedInput.style.padding = '8px';
+    speedInput.style.borderRadius = '8px';
+    speedInput.style.border = '1px solid #ccc';
+    speedInput.style.boxSizing = 'border-box';
 
     // 创建选择加减速步长的选项
     let speedStepLabel = document.createElement('div');
     speedStepLabel.textContent = '选择加减速步长:';
-    speedStepLabel.style.marginBottom = '5px';
+    speedStepLabel.style.marginBottom = '8px';
     speedStepLabel.style.fontSize = '14px';
+    speedStepLabel.style.color = '#555';
 
     let stepContainer = document.createElement('div');
     stepContainer.style.display = 'flex';
     stepContainer.style.justifyContent = 'space-between';
-    stepContainer.style.marginBottom = '10px';
+    stepContainer.style.marginBottom = '12px';
 
     let stepOption1Label = document.createElement('label');
     stepOption1Label.textContent = '0.1';
@@ -57,6 +62,14 @@
     stepOption1.name = 'speedStep';
     stepOption1.value = '0.1';
     stepOption1.checked = true;
+    stepOption1Label.style.display = 'flex';
+    stepOption1Label.style.alignItems = 'center';
+    stepOption1Label.style.justifyContent = 'center';
+    stepOption1Label.style.padding = '6px';
+    stepOption1Label.style.borderRadius = '8px';
+    stepOption1Label.style.backgroundColor = '#e0e0e0';
+    stepOption1Label.style.margin = '0 5px';
+    stepOption1Label.style.cursor = 'pointer';
     stepOption1Label.prepend(stepOption1);
 
     let stepOption2Label = document.createElement('label');
@@ -68,6 +81,14 @@
     stepOption2.type = 'radio';
     stepOption2.name = 'speedStep';
     stepOption2.value = '1';
+    stepOption2Label.style.display = 'flex';
+    stepOption2Label.style.alignItems = 'center';
+    stepOption2Label.style.justifyContent = 'center';
+    stepOption2Label.style.padding = '6px';
+    stepOption2Label.style.borderRadius = '8px';
+    stepOption2Label.style.backgroundColor = '#e0e0e0';
+    stepOption2Label.style.margin = '0 5px';
+    stepOption2Label.style.cursor = 'pointer';
     stepOption2Label.prepend(stepOption2);
 
     stepContainer.appendChild(stepOption1Label);
@@ -78,21 +99,23 @@
 
     let increaseSpeedBtn = document.createElement('button');
     increaseSpeedBtn.textContent = '加速';
-    increaseSpeedBtn.style.marginRight = '5px';
-    increaseSpeedBtn.style.backgroundColor = 'green';
+    increaseSpeedBtn.style.marginRight = '6px';
+    increaseSpeedBtn.style.backgroundColor = '#4caf50';
     increaseSpeedBtn.style.border = 'none';
     increaseSpeedBtn.style.color = 'white';
-    increaseSpeedBtn.style.padding = '5px';
-    increaseSpeedBtn.style.borderRadius = '5px';
+    increaseSpeedBtn.style.padding = '10px';
+    increaseSpeedBtn.style.borderRadius = '8px';
+    increaseSpeedBtn.style.cursor = 'pointer';
     increaseSpeedBtn.style.width = '48%';
 
     let decreaseSpeedBtn = document.createElement('button');
     decreaseSpeedBtn.textContent = '减速';
-    decreaseSpeedBtn.style.backgroundColor = 'red';
+    decreaseSpeedBtn.style.backgroundColor = '#f44336';
     decreaseSpeedBtn.style.border = 'none';
     decreaseSpeedBtn.style.color = 'white';
-    decreaseSpeedBtn.style.padding = '5px';
-    decreaseSpeedBtn.style.borderRadius = '5px';
+    decreaseSpeedBtn.style.padding = '10px';
+    decreaseSpeedBtn.style.borderRadius = '8px';
+    decreaseSpeedBtn.style.cursor = 'pointer';
     decreaseSpeedBtn.style.width = '48%';
 
     let buttonContainer = document.createElement('div');
@@ -101,12 +124,13 @@
 
     let resetSpeedBtn = document.createElement('button');
     resetSpeedBtn.textContent = '恢复默认';
-    resetSpeedBtn.style.backgroundColor = 'blue';
+    resetSpeedBtn.style.backgroundColor = '#2196f3';
     resetSpeedBtn.style.border = 'none';
     resetSpeedBtn.style.color = 'white';
-    resetSpeedBtn.style.padding = '5px';
-    resetSpeedBtn.style.borderRadius = '5px';
-    resetSpeedBtn.style.marginTop = '10px';
+    resetSpeedBtn.style.padding = '10px';
+    resetSpeedBtn.style.borderRadius = '8px';
+    resetSpeedBtn.style.cursor = 'pointer';
+    resetSpeedBtn.style.marginTop = '12px';
     resetSpeedBtn.style.width = '100%';
 
     buttonContainer.appendChild(increaseSpeedBtn);
@@ -120,16 +144,16 @@
     // 创建时间显示框
     let timeDisplay = document.createElement('div');
     timeDisplay.style.position = 'fixed';
-    timeDisplay.style.top = '220px';  // 调整时间显示框的位置
+    timeDisplay.style.top = '260px';  // 调整时间显示框的位置
     timeDisplay.style.left = '10px';  // 左侧对齐
-    timeDisplay.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
-    timeDisplay.style.color = 'white';
-    timeDisplay.style.padding = '10px';
-    timeDisplay.style.borderRadius = '10px';
+    timeDisplay.style.backgroundColor = 'rgba(255, 255, 255, 0.9)';
+    timeDisplay.style.color = '#333';
+    timeDisplay.style.padding = '15px';
+    timeDisplay.style.borderRadius = '12px';
     timeDisplay.style.zIndex = 9999;
     timeDisplay.style.fontFamily = 'Arial, sans-serif';
-    timeDisplay.style.boxShadow = '0 0 10px rgba(0, 0, 0, 0.5)';
-    timeDisplay.style.width = '200px';
+    timeDisplay.style.boxShadow = '0 4px 15px rgba(0, 0, 0, 0.2)';
+    timeDisplay.style.width = '220px';
 
     document.body.appendChild(timeDisplay);
 
@@ -139,8 +163,8 @@
     progressBar.style.bottom = '0px';
     progressBar.style.left = '0px';
     progressBar.style.width = '0%';
-    progressBar.style.height = '5px';
-    progressBar.style.backgroundColor = 'green';
+    progressBar.style.height = '6px';
+    progressBar.style.backgroundColor = '#4caf50';
     progressBar.style.zIndex = 9999;
     progressBar.style.transition = 'width 0.5s';
 
